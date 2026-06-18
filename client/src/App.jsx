@@ -3,7 +3,9 @@ import TaskManager from './components/TaskManager'
 
 function App() {
   return (
-    <TaskManager />
+    <main className="app">
+      <TaskManager />
+    </main>
   )
 }
 
