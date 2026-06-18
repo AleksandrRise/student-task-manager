@@ -1,0 +1,23 @@
+{
+  "name": "student-task-manager",
+  "version": "1.0.0",
+  "description": "--> Student Task Manager With Proper Infrastructure",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AleksandrRise/student-task-manager.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AleksandrRise/student-task-manager/issues"
+  },
+  "homepage": "https://github.com/AleksandrRise/student-task-manager#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
