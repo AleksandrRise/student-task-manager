@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-require("dotenv").config();
+require("dotenv").config({ path: "../.env" });
 
 const pool = require("./db");
 
@@ -9,18 +9,18 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.get("/tasks", (req, res) => {
+app.get("/todos", async (req, res) => {
   try {
-    const result = pool.query("SELECT * FROM tasks ORDER BY id ASC");
+    const result = await pool.query("SELECT * FROM todos ORDER BY id ASC");
 
     res.json(result.rows);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Failed to fetch tasks" });
+    res.status(500).json({ error: "Failed to fetch todos" });
   }
 });
 
-app.post("/tasks", async (req, res) => {
+app.post("/todos", async (req, res) => {
   try {
     const { title, description, completed } = req.body;
 
@@ -29,42 +29,42 @@ app.post("/tasks", async (req, res) => {
     }
 
     const result = await pool.query(
-      `INSERT INTO tasks (title, description, completed)
+      `INSERT INTO todos (title, description, completed)
        VALUES ($1, $2, $3)
        RETURNING *`,
-      [title, description || null, completed || false]
+      [title, description || null, completed ?? false]
     );
 
     res.status(201).json({
-      message: "Task created",
-      task: result.rows[0],
+      message: "Todo created",
+      todo: result.rows[0],
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Failed to create task" });
+    res.status(500).json({ error: "Failed to create todo" });
   }
 });
 
-app.delete("/tasks/:id", async (req, res) => {
+app.delete("/todos/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
     const result = await pool.query(
-      "DELETE FROM tasks WHERE id = $1 RETURNING *",
+      "DELETE FROM todos WHERE id = $1 RETURNING *",
       [id]
     );
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: "Task not found" });
+      return res.status(404).json({ error: "Todo not found" });
     }
 
     res.json({
-      message: `Task with id ${id} deleted`,
-      task: result.rows[0],
+      message: `Todo with id ${id} deleted`,
+      todo: result.rows[0],
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Failed to delete task" });
+    res.status(500).json({ error: "Failed to delete todo" });
   }
 });
 
