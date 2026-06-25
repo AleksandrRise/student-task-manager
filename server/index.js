@@ -16,6 +16,11 @@ app.post("/tasks", (req, res) => {
   res.json({ message: "Task created", task: { title, description, completed } });
 });
 
+app.delete("/tasks/:id", (req, res) => {
+  const { id } = req.params;
+  res.json({ message: `Task with id ${id} deleted` });
+});
+
 const PORT = process.env.PORT || 5001;
 
 app.listen(PORT, () => {
