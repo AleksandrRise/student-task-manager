@@ -68,6 +68,27 @@ app.delete("/todos/:id", async (req, res) => {
   }
 });
 
+app.patch("/todos/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { completed } = req.body;
+
+    const result = await pool.query(
+      "UPDATE todos SET completed = $1 WHERE id = $2 RETURNING *",
+      [completed, id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Todo not found" });
+    }
+
+    res.json({ todo: result.rows[0] });
+  } catch (err) {
+    console.error("PATCH /todos/:id error:", err);
+    res.status(500).json({ error: "Failed to update todo" });
+  }
+});
+
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
