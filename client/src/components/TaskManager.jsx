@@ -18,7 +18,6 @@ function TaskManager() {
   };
 
   useEffect(() => {
-    console.log(API_URL);
     fetchTasks();
   }, []);
 
@@ -35,6 +34,7 @@ function TaskManager() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          title: inputValue,
           description: inputValue,
           completed: false,
         }),
