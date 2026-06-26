@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import '../styles/TaskManager.css';
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -18,6 +18,7 @@ function TaskManager() {
   };
 
   useEffect(() => {
+    console.log(API_URL);
     fetchTasks();
   }, []);
 
