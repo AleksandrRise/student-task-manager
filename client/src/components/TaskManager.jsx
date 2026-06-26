@@ -61,12 +61,32 @@ function TaskManager() {
     }
   };
 
-  const toggleComplete = (id) => {
-    setTasks(
-      tasks.map((task) =>
-        task.id === id ? { ...task, completed: !task.completed } : task
-      )
-    );
+  const toggleComplete = async (id) => {
+    const task = tasks.find((task) => task.id === id);
+
+    if (!task) return;
+
+    try {
+      const res = await fetch(`${API_URL}/todos/${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          completed: !task.completed,
+        }),
+      });
+
+      const data = await res.json();
+
+      setTasks(
+        tasks.map((task) =>
+          task.id === id ? data.todo : task
+        )
+      );
+    } catch (err) {
+      console.error('Failed to update task:', err);
+    }
   };
 
   const handleKeyPress = (e) => {
