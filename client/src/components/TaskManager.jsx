@@ -1,26 +1,63 @@
 import { useState } from 'react';
 import '../styles/TaskManager.css';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 function TaskManager() {
   const [tasks, setTasks] = useState([]);
   const [inputValue, setInputValue] = useState('');
 
-  const addTask = () => {
+  const fetchTasks = async () => {
+    try {
+      const res = await fetch(`${API_URL}/todos`);
+      const data = await res.json();
+      setTasks(data);
+    } catch (err) {
+      console.error('Failed to fetch tasks:', err);
+    }
+  };
+
+  useEffect(() => {
+    fetchTasks();
+  }, []);
+
+  const addTask = async () => {
     if (inputValue.trim() === '') {
       alert('Please enter a task description');
       return;
     }
-    const newTask = {
-      id: Date.now(),
-      description: inputValue,
-      completed: false,
-    };
-    setTasks([...tasks, newTask]);
-    setInputValue('');
+
+    try {
+      const res = await fetch(`${API_URL}/todos`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          description: inputValue,
+          completed: false,
+        }),
+      });
+
+      const data = await res.json();
+
+      setTasks([...tasks, data.todo]);
+      setInputValue('');
+    } catch (err) {
+      console.error('Failed to add task:', err);
+    }
   };
 
-  const deleteTask = (id) => {
-    setTasks(tasks.filter((task) => task.id !== id));
+  const deleteTask = async (id) => {
+    try {
+      await fetch(`${API_URL}/todos/${id}`, {
+        method: 'DELETE',
+      });
+
+      setTasks(tasks.filter((task) => task.id !== id));
+    } catch (err) {
+      console.error('Failed to delete task:', err);
+    }
   };
 
   const toggleComplete = (id) => {
@@ -68,14 +105,19 @@ function TaskManager() {
           ) : (
             <ul className="task-list">
               {tasks.map((task) => (
-                <li key={task.id} className={`task-item ${task.completed ? 'completed' : ''}`}>
+                <li
+                  key={task.id}
+                  className={`task-item ${task.completed ? 'completed' : ''}`}
+                >
                   <input
                     type="checkbox"
                     checked={task.completed}
                     onChange={() => toggleComplete(task.id)}
                     className="task-checkbox"
                   />
-                  <span className="task-description">{task.description}</span>
+                  <span className="task-description">
+                    {task.description}
+                  </span>
                   <button
                     onClick={() => deleteTask(task.id)}
                     className="delete-btn"
