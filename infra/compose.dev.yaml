@@ -1,0 +1,7 @@
+services:
+  web:
+    build:
+      context: ../server
+      dockerfile: infra/Dockerfile.dev
+    ports:
+      - "${PORT}:5000"
